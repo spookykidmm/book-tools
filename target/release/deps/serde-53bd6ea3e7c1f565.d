@@ -1,0 +1,14 @@
+/home/spookykidmm/projects/book-tools/target/release/deps/serde-53bd6ea3e7c1f565.d: /home/spookykidmm/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /home/spookykidmm/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /home/spookykidmm/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /home/spookykidmm/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /home/spookykidmm/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /home/spookykidmm/projects/book-tools/target/release/build/serde-f2988d09eedacd1d/out/private.rs
+
+/home/spookykidmm/projects/book-tools/target/release/deps/libserde-53bd6ea3e7c1f565.rlib: /home/spookykidmm/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /home/spookykidmm/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /home/spookykidmm/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /home/spookykidmm/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /home/spookykidmm/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /home/spookykidmm/projects/book-tools/target/release/build/serde-f2988d09eedacd1d/out/private.rs
+
+/home/spookykidmm/projects/book-tools/target/release/deps/libserde-53bd6ea3e7c1f565.rmeta: /home/spookykidmm/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /home/spookykidmm/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /home/spookykidmm/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /home/spookykidmm/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /home/spookykidmm/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /home/spookykidmm/projects/book-tools/target/release/build/serde-f2988d09eedacd1d/out/private.rs
+
+/home/spookykidmm/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs:
+/home/spookykidmm/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs:
+/home/spookykidmm/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs:
+/home/spookykidmm/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs:
+/home/spookykidmm/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs:
+/home/spookykidmm/projects/book-tools/target/release/build/serde-f2988d09eedacd1d/out/private.rs:
+
+# env-dep:OUT_DIR=/home/spookykidmm/projects/book-tools/target/release/build/serde-f2988d09eedacd1d/out

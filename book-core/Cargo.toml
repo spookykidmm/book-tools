@@ -1,0 +1,21 @@
+[package]
+name = "book-core"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+toml = { workspace = true }
+walkdir = { workspace = true }
+rayon = { workspace = true }
+regex = { workspace = true }
+chrono = { workspace = true }
+glob = { workspace = true }
+md5 = { workspace = true }
+uuid = { workspace = true }
+blake3 = "1.5"
+lofty = "0.21"
+which = "6.0"
+tempfile = "3.10"
