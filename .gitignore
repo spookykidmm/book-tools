@@ -1,0 +1,54 @@
+# Rust build artifacts
+target/
+**/target/
+Cargo.lock
+
+# Build outputs
+*.o
+*.rlib
+*.dylib
+*.dll
+*.so
+*.a
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Archive files
+*.tar.gz
+*.zip
+booktools_review_*/
+booktools_review_*.tar.gz
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Test outputs
+BookFullTest/
+BookSandboxTest/
+BookCleanTest/
+BookSandboxSmart/
+bookfull_*.json
+sandbox_*.json
+smart_manifest.json
+
+# Config files with secrets
+*.secret
+*.key
+
+# Coverage reports
+coverage/
+*.prof
+*.profraw
+
+# Documentation build
+doc/
+book-docs/
