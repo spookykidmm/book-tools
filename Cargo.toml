@@ -32,3 +32,7 @@ blake3 = "1.5"
 lofty = "0.21"
 which = "6.0"
 tempfile = "3.10"
+
+# These are mutually exclusive - only one should be active
+# ffmpeg-next = "8.1"  # For rust-ffmpeg wrapper branch
+# ffmpreg = "0.2"      # For ffmpreg branch
