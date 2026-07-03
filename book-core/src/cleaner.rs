@@ -1,4 +1,4 @@
-use crate::types::{BookFile, MetadataSource};
+use crate::types::{BookFile};
 use crate::config::MappingsConfig;
 use regex::Regex;
 
@@ -41,12 +41,12 @@ impl Cleaner {
         let mut result = name.to_string();
 
         if self.remove_brackets {
-            let bracket_re = regex::Regex::new(r"\[[^\]]*\]").unwrap();
+            let bracket_re = Regex::new(r"\[[^\]]*\]").unwrap();
             result = bracket_re.replace_all(&result, "").to_string();
         }
 
         if self.remove_parentheses {
-            let paren_re = regex::Regex::new(r"\([^)]*\)").unwrap();
+            let paren_re = Regex::new(r"\([^)]*\)").unwrap();
             result = paren_re.replace_all(&result, "").to_string();
         }
 
@@ -55,7 +55,7 @@ impl Cleaner {
         }
 
         if self.normalize_spaces {
-            let space_re = regex::Regex::new(r"\s+").unwrap();
+            let space_re = Regex::new(r"\s+").unwrap();
             result = space_re.replace_all(&result, " ").to_string();
             result = result.trim().to_string();
         }
@@ -70,7 +70,7 @@ impl Cleaner {
 
         let name_without_ext = name.trim_end_matches(&format!(".{}", ext)).trim();
 
-        if let Some((author, title, narrator, _source)) = self.extract_audiobook_with_narrator(name_without_ext) {
+        if let Some((author, title, narrator)) = self.extract_author_title_narrator(name_without_ext) {
             return (Some(author), Some(title), Some(narrator), None);
         }
 
@@ -93,35 +93,18 @@ impl Cleaner {
         (None, Some(name_without_ext.to_string()), None, None)
     }
 
-    fn extract_audiobook_with_narrator(&self, name: &str) -> Option<(String, String, String, MetadataSource)> {
-        for (pattern, mapping) in &self.mappings.audiobook_patterns {
-            if name.contains(pattern) {
-                for narrator in &self.mappings.narrators {
-                    if name.ends_with(narrator) {
-                        return Some((mapping.author.clone(), mapping.title.clone(), narrator.clone(), MetadataSource::Mapping));
-                    }
-                }
-                return Some((mapping.author.clone(), mapping.title.clone(), "Unknown".to_string(), MetadataSource::Mapping));
-            }
-        }
-
-        if let Some((title, narrator)) = self.extract_narrator_from_end(name) {
-            for (pattern, mapping) in &self.mappings.audiobook_patterns {
-                if name.contains(pattern) {
-                    return Some((mapping.author.clone(), title, narrator, MetadataSource::Filename));
-                }
-            }
-        }
-
-        None
-    }
-
-    fn extract_narrator_from_end(&self, name: &str) -> Option<(String, String)> {
-        for narrator in &self.mappings.narrators {
-            if name.ends_with(narrator) {
-                let prefix = name[..name.len() - narrator.len()].trim_end_matches(|c| c == '_' || c == '-');
-                if !prefix.is_empty() && prefix.len() > narrator.len() {
-                    return Some((prefix.to_string(), narrator.to_string()));
+    fn extract_author_title_narrator(&self, name: &str) -> Option<(String, String, String)> {
+        // Try to parse "Author - Title_Narrator" pattern
+        let parts: Vec<&str> = name.split(" - ").collect();
+        if parts.len() >= 2 {
+            let author = parts[0].trim();
+            let rest = parts[1..].join(" - ");
+            
+            // Check if rest ends with a known narrator
+            for narrator in &self.mappings.narrators {
+                if rest.ends_with(narrator) {
+                    let title = rest[..rest.len() - narrator.len()].trim_end_matches(|c| c == ' ' || c == '_' || c == '-');
+                    return Some((author.to_string(), title.to_string(), narrator.to_string()));
                 }
             }
         }
@@ -167,8 +150,8 @@ impl Cleaner {
     }
 
     fn extract_title_with_author(&self, name: &str) -> Option<(String, String)> {
-        let re1 = regex::Regex::new(r"^(.+?)\s*\(([^)]+)\)$").unwrap();
-        let re2 = regex::Regex::new(r"^(.+?)\s*\[([^\]]+)\]$").unwrap();
+        let re1 = Regex::new(r"^(.+?)\s*\(([^)]+)\)$").unwrap();
+        let re2 = Regex::new(r"^(.+?)\s*\[([^\]]+)\]$").unwrap();
 
         if let Some(caps) = re1.captures(name) {
             let title = caps[1].trim().to_string();

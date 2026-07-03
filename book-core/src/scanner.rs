@@ -23,6 +23,7 @@ impl Scanner {
             patterns: vec![
                 "*.mp3".to_string(),
                 "*.m4a".to_string(),
+                "*.m4b".to_string(),
                 "*.flac".to_string(),
                 "*.epub".to_string(),
                 "*.pdf".to_string(),
@@ -105,8 +106,11 @@ impl Scanner {
 
             let file_type = self.detect_type(&ext);
 
-            // Compute content hash for dedupe/integrity
+            // Compute content hash
             let hash = hash_file(path).ok();
+
+            // Extract author from path or filename
+            let (author, title) = self.extract_author_title(path, &name);
 
             let book_file = BookFile {
                 path: path.to_path_buf(),
@@ -115,8 +119,12 @@ impl Scanner {
                 size,
                 file_type: file_type.clone(),
                 metadata: None,
-                inferred: None,
-                chosen_source: MetadataSource::Unknown,
+                inferred: Some(crate::types::Metadata {
+                    author: author.clone(),
+                    title: title.clone(),
+                    ..Default::default()
+                }),
+                chosen_source: if author.is_some() { MetadataSource::Folder } else { MetadataSource::Unknown },
                 content_hash: hash,
                 status: FileStatus::Scanned,
                 cleaned_name: None,
@@ -143,5 +151,116 @@ impl Scanner {
             "nfo" | "jpg" | "jpeg" | "png" | "gif" | "sfv" | "log" | "bak" | "tmp" => FileType::Junk,
             _ => FileType::Unknown,
         }
+    }
+
+    fn extract_author_title(&self, path: &Path, filename: &str) -> (Option<String>, Option<String>) {
+        // First try to extract from filename (e.g., "Author - Title.mp3")
+        if let Some((author, title)) = self.parse_filename(filename) {
+            return (Some(author), Some(title));
+        }
+
+        // Then try to extract from the path (e.g., "Author - Title/")
+        if let Some(parent) = path.parent() {
+            if let Some(dir_name) = parent.file_name() {
+                let dir_str = dir_name.to_string_lossy();
+                if let Some((author, title)) = self.parse_filename(&dir_str) {
+                    return (Some(author), Some(title));
+                }
+            }
+        }
+
+        // Then try to extract from the grandparent path
+        if let Some(grandparent) = path.parent().and_then(|p| p.parent()) {
+            if let Some(dir_name) = grandparent.file_name() {
+                let dir_str = dir_name.to_string_lossy();
+                if let Some((author, title)) = self.parse_filename(&dir_str) {
+                    return (Some(author), Some(title));
+                }
+            }
+        }
+
+        // Fallback: use the filename as the title
+        (None, Some(filename.to_string()))
+    }
+
+    fn parse_filename(&self, name: &str) -> Option<(String, String)> {
+        // Skip if it starts with a number (chapter marker)
+        if name.chars().next().map(|c| c.is_ascii_digit()).unwrap_or(false) {
+            return None;
+        }
+
+        // Try "Author - Title" pattern
+        let parts: Vec<&str> = name.split(" - ").collect();
+        if parts.len() >= 2 {
+            // Check if the first part looks like an author name
+            let first = parts[0].trim();
+            let rest = parts[1..].join(" - ");
+            if self.looks_like_author(first) {
+                return Some((first.to_string(), rest));
+            }
+        }
+
+        // Try "Title - Author" pattern
+        if let Some((author, title)) = self.parse_title_author(name) {
+            return Some((author, title));
+        }
+
+        None
+    }
+
+    fn looks_like_author(&self, name: &str) -> bool {
+        // Skip if it's a number
+        if name.chars().all(|c| c.is_ascii_digit()) {
+            return false;
+        }
+
+        // Skip if it's a single character
+        if name.len() <= 2 {
+            return false;
+        }
+
+        // Check for comma (Last, First)
+        if name.contains(',') {
+            return true;
+        }
+
+        // Check for common author name patterns
+        let common_author_words = ["King", "Dick", "Asimov", "Bradbury", "Heinlein", "Tolkien"];
+        for word in common_author_words {
+            if name.contains(word) {
+                return true;
+            }
+        }
+
+        // Check if it's too short to be an author
+        if name.len() < 4 {
+            return false;
+        }
+
+        // Default: if it's not a number and not too short, it might be an author
+        true
+    }
+
+    fn parse_title_author(&self, name: &str) -> Option<(String, String)> {
+        // Look for "by Author" pattern
+        if let Some(pos) = name.find(" by ") {
+            let title = name[..pos].trim().to_string();
+            let author = name[pos + 4..].trim().to_string();
+            if !author.is_empty() && self.looks_like_author(&author) {
+                return Some((author, title));
+            }
+        }
+
+        // Look for "Title (Author)" pattern
+        let re = regex::Regex::new(r"^(.+?)\s*\(([^)]+)\)$").unwrap();
+        if let Some(caps) = re.captures(name) {
+            let title = caps[1].trim().to_string();
+            let author = caps[2].trim().to_string();
+            if self.looks_like_author(&author) {
+                return Some((author, title));
+            }
+        }
+
+        None
     }
 }

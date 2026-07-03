@@ -9,6 +9,9 @@ members = [
     "book-report",
     "book-pretty",
     "book-watch",
+    "book-registry",
+    "book-decision",
+    "book-author",
 ]
 
 [workspace.dependencies]
@@ -32,3 +35,4 @@ blake3 = "1.5"
 lofty = "0.21"
 which = "6.0"
 tempfile = "3.10"
+shellexpand = "3.1"

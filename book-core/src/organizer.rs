@@ -144,11 +144,7 @@ impl Organizer {
         let dst_hash = hash_file(dest)?;
 
         if src_hash != dst_hash {
-            return Err(anyhow!(
-                "Hash mismatch: {} != {}",
-                src_hash,
-                dst_hash
-            ));
+            return Err(anyhow!("Hash mismatch: {} != {}", src_hash, dst_hash));
         }
 
         Ok(())

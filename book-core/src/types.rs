@@ -1,6 +1,67 @@
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
+// ====== New Work-Oriented Types ======
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct BookUnit {
+    pub id: String,
+    pub title: Option<String>,
+    pub author: Option<String>,
+    pub series: Option<String>,
+    pub source_files: Vec<PathBuf>,
+    pub merged_output: Option<PathBuf>,
+    pub file_type: FileType,
+    pub work_hash: Option<String>,
+    pub status: BookStatus,
+    pub metadata: Option<Metadata>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub enum BookStatus {
+    Discovered,
+    Queued,
+    Processing { worker_id: u32, started_at: i64 },
+    Processed,
+    Failed,
+    Hung,
+    Quarantined,
+}
+
+impl Default for BookStatus {
+    fn default() -> Self {
+        Self::Discovered
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub enum FileType {
+    Audio,
+    Ebook,
+    Comic,
+    Document,
+    Unknown,
+    Junk,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Artifact {
+    pub path: PathBuf,
+    pub size: u64,
+    pub hash: Option<String>,
+    pub artifact_type: ArtifactType,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub enum ArtifactType {
+    Source,
+    Merged,
+    Metadata,
+    Cover,
+}
+
+// ====== Legacy Types (for compatibility) ======
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Manifest {
     pub source: PathBuf,
@@ -25,49 +86,12 @@ pub struct BookFile {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub enum FileType {
-    Audio,
-    Ebook,
-    Comic,
-    Document,
-    Unknown,
-    Junk,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
-pub struct Metadata {
-    pub title: Option<String>,
-    pub author: Option<String>,
-    pub narrator: Option<String>,
-    pub series: Option<String>,
-    pub series_index: Option<u32>,
-    pub disc_number: Option<u32>,
-    pub track_number: Option<u32>,
-    pub year: Option<u32>,
-    pub publisher: Option<String>,
-    pub isbn: Option<String>,
-    pub language: Option<String>,
-    pub tags: Vec<String>,
-    pub cover: Option<PathBuf>,
-    pub bitrate: Option<u32>,
-    pub duration: Option<u64>,
-    pub chapters: Vec<Chapter>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Chapter {
-    pub title: String,
-    pub start: u64,
-    pub end: Option<u64>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum MetadataSource {
-    Embedded,   // From ID3 tags (highest confidence)
-    Mapping,    // From configured mapping
-    Folder,     // From folder structure
-    Filename,   // From filename heuristics
-    Unknown,    // No source
+    Embedded,
+    Mapping,
+    Folder,
+    Filename,
+    Unknown,
 }
 
 impl MetadataSource {
@@ -98,6 +122,33 @@ impl Default for FileStatus {
     fn default() -> Self {
         Self::Pending
     }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct Metadata {
+    pub title: Option<String>,
+    pub author: Option<String>,
+    pub narrator: Option<String>,
+    pub series: Option<String>,
+    pub series_index: Option<u32>,
+    pub disc_number: Option<u32>,
+    pub track_number: Option<u32>,
+    pub year: Option<u32>,
+    pub publisher: Option<String>,
+    pub isbn: Option<String>,
+    pub language: Option<String>,
+    pub tags: Vec<String>,
+    pub cover: Option<PathBuf>,
+    pub bitrate: Option<u32>,
+    pub duration: Option<u64>,
+    pub chapters: Vec<Chapter>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Chapter {
+    pub title: String,
+    pub start: u64,
+    pub end: Option<u64>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]

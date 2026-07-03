@@ -6,6 +6,9 @@ pub mod metadata;
 pub mod organizer;
 pub mod config;
 pub mod hashing;
+pub mod registry;
+pub mod decision;
+pub mod unit;
 
 use anyhow::Result;
 use std::path::PathBuf;
@@ -22,3 +25,4 @@ pub struct Context {
     pub manifest: types::Manifest,
     pub output: PathBuf,
 }
+pub mod author_db;

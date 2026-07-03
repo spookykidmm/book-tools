@@ -1,11 +1,11 @@
 [package]
-name = "book-scan"
+name = "book-registry"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 anyhow = { workspace = true }
-serde_json = { workspace = true }
 clap = { workspace = true }
+serde_json = { workspace = true }
 shellexpand = { workspace = true }
 book-core = { path = "../book-core" }

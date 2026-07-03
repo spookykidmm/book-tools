@@ -19,3 +19,4 @@ blake3 = "1.5"
 lofty = "0.21"
 which = "6.0"
 tempfile = "3.10"
+rusqlite = { version = "0.31", features = ["bundled"] }
